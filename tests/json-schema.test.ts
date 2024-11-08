@@ -1,6 +1,7 @@
 import {
   JSONSchemaEnforcerFactory,
   JSONSchemaOptionsFactory,
+  JSONSchemaOptionsParser,
   JSONSchemaLabeler,
   JSONSchemaSplitter,
   SchemaOptionsFactory,
@@ -104,6 +105,22 @@ describe("custom SchemaOptionsFactory", () => {
       const options = optionsFactory.process({ enum: [true, false] })
       const optionLabels = options.map(item => item.label)
       expect(optionLabels).toEqual(['true', 'false'])
+    })
+  })
+})
+
+describe("KeywordErrorLogValidationParser", () => {
+  const parser = new JSONSchemaOptionsParser()
+  describe("getMostValidOption", () => {
+    test("should find matching option", () => {
+      const options = parser.getOptionsFor({
+        oneOf: [
+          { type: 'boolean' },
+          { type: 'number' }
+        ]
+      })
+      const match = parser.getMostValidOption(options, 1)
+      expect(match?.label).toEqual('number')
     })
   })
 })

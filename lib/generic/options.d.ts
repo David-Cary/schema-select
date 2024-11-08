@@ -1,5 +1,5 @@
 import type { ConversionFactory, SchemaEnforcer, UntypedObject } from './coercion';
-import type { Convert } from './validation';
+import type { Convert, ValidationParser } from './validation';
 export interface LabeledValue<T> {
     label: string;
     value: T;
@@ -49,4 +49,30 @@ export declare class KeyedSchemaLabeler implements ConversionFactory<UntypedObje
      * @returns {string}
      */
     process(source: UntypedObject): string;
+}
+/**
+ * Handles generating and evaluating schema options.
+ * @class
+ * @template SchemaType, ValidationType
+ * @param {SchemaOptionsFactory<SchemaType, ValidationType>} optionsFactory - handles option list creation
+ * @param {ValidationParser<ValidationType>} validationParser - handles validating options
+ */
+export declare class SchemaOptionsParser<SchemaType = any, ValidationType = boolean> {
+    optionsFactory: SchemaOptionsFactory<SchemaType, ValidationType>;
+    validationParser: ValidationParser<ValidationType>;
+    constructor(optionsFactory: SchemaOptionsFactory<SchemaType, ValidationType>, validationParser: ValidationParser<ValidationType>);
+    /**
+     * Generates label from a provided schema.
+     * @function
+     * @param {UntypedObject} source - schema to be converted
+     * @returns {string}
+     */
+    getOptionsFor(schema: SchemaType): Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>>;
+    /**
+     * Generates label from a provided schema.
+     * @function
+     * @param {UntypedObject} source - schema to be converted
+     * @returns {string}
+     */
+    getMostValidOption(options: Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>>, value: any): LabeledValue<SchemaEnforcer<SchemaType, ValidationType>> | undefined;
 }

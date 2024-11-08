@@ -21,6 +21,13 @@ export interface ValidationParser<ValidationType = boolean> {
      * @returns {ValidationType}
      */
     getValid: () => ValidationType;
+    /**
+     * Returns value's validity as a number.
+     * @function
+     * @param {ValidationType} source - value to be rated
+     * @returns {number}
+     */
+    rateValidity: Convert<ValidationType, number>;
 }
 /**
  * Handles treating booleans as validation values.
@@ -30,6 +37,7 @@ export interface ValidationParser<ValidationType = boolean> {
 export declare class BooleanValidationParser implements ValidationParser {
     isValid(value: boolean): boolean;
     getValid(): boolean;
+    rateValidity(value: boolean): number;
 }
 /**
  * Object wrapper for a list of errors.
@@ -43,11 +51,13 @@ export interface ErrorLog<ErrorType = string> {
 /**
  * Handles checking if an error log indicates valid results.
  * @class
+ * @template T
  * @implements ValidationParser<ErrorLog<any>>
  */
-export declare class ErrorLogValidationParser implements ValidationParser<ErrorLog<any>> {
-    isValid(value: ErrorLog<any>): boolean;
-    getValid(): ErrorLog<any>;
+export declare class ErrorLogValidationParser<T = any> implements ValidationParser<ErrorLog<T>> {
+    isValid(value: ErrorLog<T>): boolean;
+    getValid(): ErrorLog<T>;
+    rateValidity(value: ErrorLog<T>): number;
 }
 /**
  * Combines multiple validation functions into a single function, returning the first falsey validation.

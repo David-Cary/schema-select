@@ -82,6 +82,27 @@ implements ValueConstraint<From, ErrorLog<KeywordError>, To> {
 }
 
 /**
+ * Adds support for error priority checking to error log validation parsing.
+ * @class
+ * @extends ErrorLogValidationParser<Partial<KeywordError>>
+ */
+export class KeywordErrorLogValidationParser
+  extends ErrorLogValidationParser<Partial<KeywordError>> {
+  rateValidity (value: ErrorLog<Partial<KeywordError>>): number {
+    if (value.errors.length > 0) {
+      let maxErrorPriority = 0
+      for (const error of value.errors) {
+        if (error.priority != null && error.priority > maxErrorPriority) {
+          maxErrorPriority = error.priority
+        }
+      }
+      return -maxErrorPriority
+    }
+    return 1
+  }
+}
+
+/**
  * Aplies the first matching constraint within the provided set.
  * @class
  * @template From, To

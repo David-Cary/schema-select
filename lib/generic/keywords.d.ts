@@ -38,6 +38,14 @@ export declare class KeywordValueEnforcer<From = any, To = From> implements Valu
     validate(target: From): ErrorLog<KeywordError>;
 }
 /**
+ * Adds support for error priority checking to error log validation parsing.
+ * @class
+ * @extends ErrorLogValidationParser<Partial<KeywordError>>
+ */
+export declare class KeywordErrorLogValidationParser extends ErrorLogValidationParser<Partial<KeywordError>> {
+    rateValidity(value: ErrorLog<Partial<KeywordError>>): number;
+}
+/**
  * Aplies the first matching constraint within the provided set.
  * @class
  * @template From, To
@@ -94,7 +102,7 @@ export type KeywordRulesEnforcer<From = any, To = From> = SchemaEnforcer<Untyped
  */
 export declare class SequentialKeywordEnforcerFactory<From = any, To = From> implements ConversionFactory<UntypedObject, SchemaEnforcer<UntypedObject, ErrorLog<KeywordError>, To>, KeywordEnforcerContext<From, To>> {
     rules: Array<KeywordRule<From, To>>;
-    validationParser: ErrorLogValidationParser;
+    validationParser: ErrorLogValidationParser<any>;
     constructor(rules?: Array<KeywordRule<From, To>>);
     process(schema: UntypedObject, context?: KeywordEnforcerContext<From, To>): KeywordRulesEnforcer<From, To>;
 }

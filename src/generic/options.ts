@@ -1,5 +1,5 @@
 import type { ConversionFactory, SchemaEnforcer, UntypedObject } from './coercion'
-import type { Convert } from './validation'
+import type { Convert, ValidationParser } from './validation'
 
 export interface LabeledValue<T> {
   label: string
@@ -15,10 +15,8 @@ export interface LabeledValue<T> {
  * @param {ConversionFactory<SchemaType, SchemaEnforcer<SchemaType, ValidationType>>} enforcerFactory - produces enforcers for each subschema
  * @param {ConversionFactory<SchemaType, SchemaType[]> | undefined} splitter - converts schema to subschema list
  */
-export class SchemaOptionsFactory<
-  SchemaType = any,
-  ValidationType = boolean
-> implements ConversionFactory<SchemaType, Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>>> {
+export class SchemaOptionsFactory<SchemaType = any, ValidationType = boolean>
+implements ConversionFactory<SchemaType, Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>>> {
   labelFactory: ConversionFactory<SchemaType, string>
   enforcerFactory: ConversionFactory<SchemaType, SchemaEnforcer<SchemaType, ValidationType>>
   splitter?: ConversionFactory<SchemaType, SchemaType[]>
@@ -104,5 +102,60 @@ export class KeyedSchemaLabeler implements ConversionFactory<UntypedObject, stri
       }
     }
     return this.stringify(source)
+  }
+}
+
+/**
+ * Handles generating and evaluating schema options.
+ * @class
+ * @template SchemaType, ValidationType
+ * @param {SchemaOptionsFactory<SchemaType, ValidationType>} optionsFactory - handles option list creation
+ * @param {ValidationParser<ValidationType>} validationParser - handles validating options
+ */
+export class SchemaOptionsParser<SchemaType = any, ValidationType = boolean> {
+  optionsFactory: SchemaOptionsFactory<SchemaType, ValidationType>
+  validationParser: ValidationParser<ValidationType>
+
+  constructor (
+    optionsFactory: SchemaOptionsFactory<SchemaType, ValidationType>,
+    validationParser: ValidationParser<ValidationType>
+  ) {
+    this.optionsFactory = optionsFactory
+    this.validationParser = validationParser
+  }
+
+  /**
+   * Generates label from a provided schema.
+   * @function
+   * @param {UntypedObject} source - schema to be converted
+   * @returns {string}
+   */
+  getOptionsFor (
+    schema: SchemaType
+  ): Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>> {
+    return this.optionsFactory.process(schema)
+  }
+
+  /**
+   * Generates label from a provided schema.
+   * @function
+   * @param {UntypedObject} source - schema to be converted
+   * @returns {string}
+   */
+  getMostValidOption (
+    options: Array<LabeledValue<SchemaEnforcer<SchemaType, ValidationType>>>,
+    value: any
+  ): LabeledValue<SchemaEnforcer<SchemaType, ValidationType>> | undefined {
+    let bestOption: LabeledValue<SchemaEnforcer<SchemaType, ValidationType>> | undefined
+    let maxValidity = Number.NEGATIVE_INFINITY
+    for (const option of options) {
+      const validation = option.value.validate(value)
+      const validity = this.validationParser.rateValidity(validation)
+      if (validity > maxValidity) {
+        bestOption = option
+        maxValidity = validity
+      }
+    }
+    return bestOption
   }
 }

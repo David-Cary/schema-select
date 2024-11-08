@@ -100,3 +100,22 @@ enforcerFactory.keywordHandler.rules.push(
   }
 )
 ```
+
+## Option Parsers
+As of version 1.1.0 I've added the `SchemaOptionsParser` class.  This combines an options factory with a validation parser to let you find the most appropriate subschema for a given value, like so:
+```
+import { JSONSchemaOptionsParser } from "schema-select"
+
+const parser = new JSONSchemaOptionsParser()
+const options = parser.getOptionsFor({
+  oneOf: [
+    { type: 'boolean' },
+    { type: 'number' }
+  ]
+})
+const match = parser.getMostValidOption(options, 1)
+```
+
+The above uses a subclass that starts with a `JSONSchemaOptionsFactory` and `KeywordErrorLogValidationParser`.  As with the `JSONSchemaOptionsFactory` you may pass in a custom enforcer factory to plug in your library of choice.
+
+To support these option parsers, validation parsers now have a `rateValidity` function that convert a validation value to a number.  The above `KeywordErrorLogValidationParser` uses the highest priority error to determine this.

@@ -1,7 +1,7 @@
 import type { ConversionFactory, SchemaEnforcer, UntypedObject } from '../generic/coercion';
 import { type ErrorLog } from '../generic/validation';
 import { type KeywordError } from '../generic/keywords';
-import { SchemaOptionsFactory, KeyedSchemaLabeler } from '../generic/options';
+import { SchemaOptionsFactory, SchemaOptionsParser, KeyedSchemaLabeler } from '../generic/options';
 import { type BooleanFork, type FlagOrObject } from './coercion';
 /**
  * Standard list of JSON schema label properties in descending order of precedence.
@@ -78,5 +78,13 @@ export declare class JSONSchemaSplitter implements ConversionFactory<FlagOrObjec
  * @extends SchemaOptionsFactory<FlagOrObject, ErrorLog<Partial<KeywordError>>>
  */
 export declare class JSONSchemaOptionsFactory extends SchemaOptionsFactory<FlagOrObject, ErrorLog<Partial<KeywordError>>> {
+    constructor(enforcerFactory?: ConversionFactory<FlagOrObject, SchemaEnforcer<FlagOrObject, ErrorLog<Partial<KeywordError>>>>);
+}
+/**
+ * Creates and evaluates JSON Schema subschema options.
+ * @class
+ * @extends SchemaOptionsParser<FlagOrObject, ErrorLog<Partial<KeywordError>>>
+ */
+export declare class JSONSchemaOptionsParser extends SchemaOptionsParser<FlagOrObject, ErrorLog<Partial<KeywordError>>> {
     constructor(enforcerFactory?: ConversionFactory<FlagOrObject, SchemaEnforcer<FlagOrObject, ErrorLog<Partial<KeywordError>>>>);
 }

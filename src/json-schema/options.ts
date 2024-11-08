@@ -1,7 +1,7 @@
 import type { ConversionFactory, SchemaEnforcer, UntypedObject } from '../generic/coercion'
 import { type ErrorLog } from '../generic/validation'
-import { type KeywordError } from '../generic/keywords'
-import { SchemaOptionsFactory, KeyedSchemaLabeler } from '../generic/options'
+import { type KeywordError, KeywordErrorLogValidationParser } from '../generic/keywords'
+import { SchemaOptionsFactory, SchemaOptionsParser, KeyedSchemaLabeler } from '../generic/options'
 import { type BooleanFork, type FlagOrObject, JSONSchemaEnforcerFactory } from './coercion'
 
 /**
@@ -169,6 +169,25 @@ export class JSONSchemaOptionsFactory extends SchemaOptionsFactory<FlagOrObject,
       enforcerFactory,
       new JSONSchemaLabeler(),
       new JSONSchemaSplitter()
+    )
+  }
+}
+
+/**
+ * Creates and evaluates JSON Schema subschema options.
+ * @class
+ * @extends SchemaOptionsParser<FlagOrObject, ErrorLog<Partial<KeywordError>>>
+ */
+export class JSONSchemaOptionsParser extends SchemaOptionsParser<FlagOrObject, ErrorLog<Partial<KeywordError>>> {
+  constructor (
+    enforcerFactory: ConversionFactory<
+    FlagOrObject,
+    SchemaEnforcer<FlagOrObject, ErrorLog<Partial<KeywordError>>>
+    > = new JSONSchemaEnforcerFactory()
+  ) {
+    super(
+      new JSONSchemaOptionsFactory(enforcerFactory),
+      new KeywordErrorLogValidationParser()
     )
   }
 }
