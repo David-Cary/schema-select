@@ -145,6 +145,10 @@ describe("StringEnforcer", () => {
     test("should apply default value on null value", () => {
       expect(enforcer.coerce(undefined)).toEqual('')
     })
+    test("should return undefined string if there's no default value", () => {
+      const nonDefaulted = new StringEnforcer()
+      expect(nonDefaulted.coerce(undefined)).toEqual('undefined')
+    })
     test("should apply typecasting to other values", () => {
       expect(enforcer.coerce(0)).toEqual('0')
     })

@@ -68,7 +68,7 @@ function createJSONSchemaTypeRules (
     ),
     string: new TypeKeywordRule(
       keyword,
-      new StringEnforcer(undefined, valueProperty)
+      new StringEnforcer('', valueProperty)
     )
   }
 }

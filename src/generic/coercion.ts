@@ -360,15 +360,22 @@ export class StringEnforcer extends ValueTypeEnforcer<string> {
 
   coerce (value: any): string {
     const unwrapped = this.unwrap(value)
-    if (typeof unwrapped === 'string') return unwrapped
     if (unwrapped == null && this.defaultValue != null) {
       return this.defaultValue
     }
-    try {
-      return JSON.stringify(unwrapped)
-    } catch (error) {
-      return String(unwrapped)
+    switch (typeof unwrapped) {
+      case 'string': {
+        return unwrapped
+      }
+      case 'object': {
+        try {
+          return JSON.stringify(unwrapped)
+        } catch (error) {
+          break
+        }
+      }
     }
+    return String(unwrapped)
   }
 }
 

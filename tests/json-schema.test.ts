@@ -33,6 +33,10 @@ describe("JSONSchemaEnforcerFactory", () => {
       }))
       expect(error.coerce?.(1)).toBe(true)
     })
+    test("should coerce undefined to empty string for string schema", () => {
+      const enforcer = enforcerFactory.process({ type: 'string' })
+      expect(enforcer.coerce?.(undefined)).toEqual('')
+    })
   })
 })
 
