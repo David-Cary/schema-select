@@ -138,7 +138,7 @@ export class JSONSchemaConstRule implements KeywordRule {
         value,
         (target: any) => isEquivalentTo(target, value),
         (target: any) => structuredClone(value),
-        90
+        150
       )
     }
   }
